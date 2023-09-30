@@ -1,5 +1,7 @@
+import 'dart:async';
+import 'dart:math';
+
 import 'package:coep/pages/pehchan/add_socials.dart';
-import 'package:coep/pages/pehchan/find_user_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
@@ -7,16 +9,30 @@ import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 import '../../services/itinerary_service.dart';
 
-class SocialHomeScreen extends StatefulWidget {
-  const SocialHomeScreen({super.key});
+class FindUserScreen extends StatefulWidget {
+  const FindUserScreen({super.key});
 
   @override
-  State<SocialHomeScreen> createState() => _SocialHomeScreenState();
+  State<FindUserScreen> createState() => _FindUserScreenState();
 }
 
-class _SocialHomeScreenState extends State<SocialHomeScreen> {
+class Debouncer {
+  final int milliseconds;
+  Timer? _timer;
+
+  Debouncer({required this.milliseconds});
+
+  run(VoidCallback action) {
+    if (null != _timer) {
+      _timer?.cancel();
+    }
+    _timer = Timer(Duration(milliseconds: milliseconds), action);
+  }
+}
+
+class _FindUserScreenState extends State<FindUserScreen> {
   List<dynamic> result = [];
-  bool loading = true;
+  bool loading = false;
   void createItenary() async {
     dynamic map = await ItineraryService().huhu();
     print(map.toString());
@@ -25,6 +41,8 @@ class _SocialHomeScreenState extends State<SocialHomeScreen> {
       loading = false;
     });
   }
+
+  final _debouncer = Debouncer(milliseconds: 500);
 
   chipList() {
     return Wrap(
@@ -41,7 +59,6 @@ class _SocialHomeScreenState extends State<SocialHomeScreen> {
   @override
   void initState() {
     // TODO: implement initState
-    createItenary();
     super.initState();
   }
 
@@ -58,20 +75,23 @@ class _SocialHomeScreenState extends State<SocialHomeScreen> {
                 height: 15,
               ),
               TextField(
-                readOnly: true,
-                autofocus: false,
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const FindUserScreen()),
-                  ).then((value) {
-                    createItenary();
+                onChanged: (string) {
+                  _debouncer.run(() {
+                    setState(() {
+                      loading = true;
+                    });
+                    ItineraryService().findUser(string).then((value) {
+                      print('value' + value.toString());
+                      setState(() {
+                        result = value['data'];
+                        loading = false;
+                      });
+                    });
                   });
                 },
                 decoration: InputDecoration(
                   prefixIcon: Icon(Icons.search),
-                  hintText: 'Add new socials',
+                  hintText: 'Search verified profiles',
                   focusColor: Colors.black,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(20.0),
@@ -82,7 +102,7 @@ class _SocialHomeScreenState extends State<SocialHomeScreen> {
                 height: 15,
               ),
               Text(
-                '  My Socials',
+                '  Search Results',
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
                 textAlign: TextAlign.left,
               ),
@@ -102,7 +122,7 @@ class _SocialHomeScreenState extends State<SocialHomeScreen> {
                           SizedBox(
                             height: 20,
                           ),
-                          Text("Fetching profiles")
+                          Text("searching through profiles")
                         ],
                       ),
                     )
@@ -172,20 +192,20 @@ class _SocialHomeScreenState extends State<SocialHomeScreen> {
                                           width: 30,
                                           height: 30,
                                         ),
-                                        Spacer(),
-                                        GestureDetector(
-                                          onTap: () async {
-                                            await ItineraryService()
-                                                .delete(result[index]['_id']);
-                                            setState(() {
-                                              result.removeAt(index);
-                                            });
-                                          },
-                                          child: Icon(
-                                            Icons.delete,
-                                            color: Colors.red,
-                                          ),
-                                        )
+                                        // Spacer(),
+                                        // GestureDetector(
+                                        //   onTap: () async {
+                                        //     await ItineraryService()
+                                        //         .delete(result[index]['_id']);
+                                        //     setState(() {
+                                        //       result.removeAt(index);
+                                        //     });
+                                        //   },
+                                        //   child: Icon(
+                                        //     Icons.delete,
+                                        //     color: Colors.red,
+                                        //   ),
+                                        // )
                                       ],
                                     ),
                                   ],
