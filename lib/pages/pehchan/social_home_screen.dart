@@ -64,7 +64,7 @@ class _SocialHomeScreenState extends State<SocialHomeScreen> {
                     context,
                     MaterialPageRoute(builder: (context) => const AddSocials()),
                   ).then((value) {
-                    setState(() {});
+                    createItenary();
                   });
                 },
                 decoration: InputDecoration(
