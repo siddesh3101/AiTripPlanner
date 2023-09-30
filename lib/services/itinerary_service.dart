@@ -1,11 +1,16 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../pages/pehchan/bloc/social_bloc.dart';
+import '../pages/pehchan/models/social_media.dart';
 
 class ItineraryService {
   late final _apiLink;
   late final Dio _dio;
 
   ItineraryService() {
-    _apiLink = "https://E4.adityasurve1.repl.co";
+    _apiLink = "https://bvp-backend.onrender.com";
     _dio = Dio(
       BaseOptions(
         headers: {
@@ -34,6 +39,69 @@ class ItineraryService {
         '/itenary',
         data: data2,
       );
+
+      return response.data;
+    } on DioError catch (e) {
+      throw Exception(e.message);
+    }
+  }
+
+  Future<Map<dynamic, dynamic>> huhu() async {
+    var data2 = {
+      'id': '6518004ca59da31963547d35',
+
+      // transfer - 4, pending - 0, completed - 1
+    };
+    print(data2);
+
+    try {
+      Response response = await _dio.get('/social', queryParameters: data2);
+
+      return response.data;
+    } on DioError catch (e) {
+      throw Exception(e.message);
+    }
+  }
+
+  Future<dynamic> hehe(BuildContext context) async {
+    var data2 = {
+      'data': context
+          .read<CreateQrBloc>()
+          .qrModel
+          .userDetails
+          .map((SocialMediaData e) => e.toJson())
+          .toList(),
+      // transfer - 4, pending - 0, completed - 1
+    };
+    print(data2);
+
+    try {
+      Response response = await _dio.post(
+        '/social',
+        data: data2,
+      );
+      print(response.data);
+
+      return response.data;
+    } on DioError catch (e) {
+      throw Exception(e.message);
+    }
+  }
+
+  Future<dynamic> delete(String id) async {
+    var data2 = {
+      'id': id,
+
+      // transfer - 4, pending - 0, completed - 1
+    };
+    print(data2);
+
+    try {
+      Response response = await _dio.delete(
+        '/social',
+        data: data2,
+      );
+      print(response.data);
 
       return response.data;
     } on DioError catch (e) {

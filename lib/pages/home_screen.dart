@@ -383,7 +383,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "Travelogy",
+          "FlyCast",
           style: TextStyle(color: Colors.white),
         ),
         centerTitle: true,
