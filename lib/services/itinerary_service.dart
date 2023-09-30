@@ -99,7 +99,7 @@ class ItineraryService {
     try {
       Response response = await _dio.delete(
         '/social',
-        data: data2,
+        queryParameters: data2,
       );
       print(response.data);
 
