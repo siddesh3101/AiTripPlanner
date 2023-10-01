@@ -51,6 +51,7 @@ dependencies:
   panorama: ^0.4.1
   path_provider: ^2.0.14
   assets_audio_player: ^3.0.6
+  page_transition: ^2.0.9
   open_file: ^3.2.1
   easy_geofencing: ^0.2.0
   geolocator: ^7.7.1

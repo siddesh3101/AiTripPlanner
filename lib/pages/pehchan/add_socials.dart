@@ -4,8 +4,11 @@ import 'dart:io';
 
 import 'package:coep/pages/pehchan/models/social_category.dart';
 import 'package:coep/pages/pehchan/primary_button.dart';
+import 'package:coep/pages/pehchan/social_home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:lottie/lottie.dart';
+import 'package:printing/printing.dart';
 import 'package:provider/provider.dart';
 
 import '../../services/itinerary_service.dart';
@@ -14,6 +17,7 @@ import 'models/social_media.dart';
 import 'package:http/http.dart' as http;
 
 class AddSocials extends StatefulWidget {
+  static const String routeName = '/addsocials';
   const AddSocials({super.key});
 
   @override
@@ -30,18 +34,43 @@ class _AddSocialsState extends State<AddSocials> {
   final List<QrCategory> addOnSocialList = [
     QrCategory.twitter,
     QrCategory.snapchat,
-    QrCategory.instagram
+    QrCategory.instagram,
+    QrCategory.facebook
   ];
-  Future<http.Response> createAlbum() {
-    return http.post(
-      Uri.parse('https://bvp-backend.onrender.com/social'),
-      body: (<String, dynamic>{
-        'data': context
-            .read<CreateQrBloc>()
-            .qrModel
-            .userDetails
-            .map((SocialMediaData e) => e.toJson()),
-      }),
+
+  //
+
+  Future<void> _dialogBuilder(BuildContext context) {
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Account added successfully'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Lottie.asset('assets/icons/create/animation.json', repeat: false),
+            ],
+          ),
+          actions: <Widget>[
+            TextButton(
+              style: TextButton.styleFrom(
+                textStyle: Theme.of(context).textTheme.labelLarge,
+              ),
+              child: const Text('Close'),
+              onPressed: () {
+                context.read<CreateQrBloc>().qrModel.userDetails = [];
+                Navigator.pushNamedAndRemoveUntil(
+                  context,
+                  SocialHomeScreen.routeName,
+                  (route) => false,
+                );
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 
@@ -77,35 +106,34 @@ class _AddSocialsState extends State<AddSocials> {
                       },
                       child: Stack(
                         children: [
-                          if (image == null)
-                            Container(
-                              height: 50,
-                              width: 50,
-                              decoration: const BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: Color(0xFFDFDDEA),
-                              ),
-                              child: Center(
-                                child: Icon(
-                                  Icons.person_outline_rounded,
-                                  color: Colors.black,
-                                ),
-                              ),
-                            )
-                          else
-                            Container(
-                              height: 50,
-                              width: 50,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                image: image != null
-                                    ? DecorationImage(
-                                        image: FileImage(image!),
-                                        fit: BoxFit.cover,
-                                      )
-                                    : null,
+                          // if (image == null)
+                          //   Container(
+                          //     height: 50,
+                          //     width: 50,
+                          //     decoration: const BoxDecoration(
+                          //       shape: BoxShape.circle,
+                          //       color: Color(0xFFDFDDEA),
+                          //     ),
+                          //     child: Center(
+                          //       child: Icon(
+                          //         Icons.person_outline_rounded,
+                          //         color: Colors.black,
+                          //       ),
+                          //     ),
+                          //   )
+                          // else
+                          Container(
+                            height: 50,
+                            width: 50,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              image: DecorationImage(
+                                image: NetworkImage(
+                                    'https://instagram.fbom36-1.fna.fbcdn.net/v/t51.2885-19/369232318_312700261292658_3328888599565003888_n.jpg?stp=dst-jpg_s320x320&_nc_ht=instagram.fbom36-1.fna.fbcdn.net&_nc_cat=106&_nc_ohc=O-99L82JgLYAX9s8Zlp&edm=AOQ1c0wBAAAA&ccb=7-5&oh=00_AfB5M4Gjp6ofzWrqVWjf1aDyVzFKR6EFxUH1X9cTvMeCqg&oe=651E155E&_nc_sid=8b3546'),
+                                fit: BoxFit.cover,
                               ),
                             ),
+                          ),
                           Positioned(
                             bottom: 0,
                             right: 0,
@@ -136,7 +164,7 @@ class _AddSocialsState extends State<AddSocials> {
                                     value;
                               },
                               decoration: InputDecoration(
-                                hintText: 'Enter Your Name',
+                                hintText: 'Siddesh Shetty',
                                 hintStyle: TextStyle(
                                   fontSize: 18,
                                   color: Colors.purple,
@@ -198,6 +226,9 @@ class _AddSocialsState extends State<AddSocials> {
                       platform: initialSocialList[index],
                       index: index,
                       onRemove: () {
+                        (context.read<CreateQrBloc>().qrModel)
+                            .userDetails
+                            .removeAt(index);
                         setState(() => initialSocialList.removeAt(index));
                       },
                       onChanged: (value) {},
@@ -245,7 +276,11 @@ class _AddSocialsState extends State<AddSocials> {
                 PrimaryButton(
                   text: 'Verify accounts',
                   onPressed: () async {
-                    dynamic map = await ItineraryService().hehe(context);
+                    await ItineraryService().hehe(context).then((value) {
+                      _dialogBuilder(context);
+                    });
+                    // print(context.read<CreateQrBloc>().qrModel.userDetails);
+
                     // log(map.toString());
                   },
                 )

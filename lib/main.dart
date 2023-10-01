@@ -5,6 +5,7 @@ import 'package:coep/pages/home_page.dart';
 import 'package:coep/pages/home_screen.dart';
 import 'package:coep/pages/offline_page.dart';
 import 'package:coep/pages/pehchan/bloc/social_bloc.dart';
+import 'package:coep/pages/pehchan/router.dart';
 import 'package:coep/pages/pehchan/social_home_screen.dart';
 import 'package:coep/pages/select_date.dart';
 import 'package:coep/pages/siren.dart';
@@ -36,6 +37,7 @@ class MyApp extends StatelessWidget {
           theme: ThemeData(
             primarySwatch: Colors.amber,
           ),
+          onGenerateRoute: AppRouter.routes,
           // localizationsDelegates: GlobalMaterialLocalizations.delegates,
           // supportedLocales: const [
           //   Locale('en', ''),

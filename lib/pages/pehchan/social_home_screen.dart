@@ -3,10 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:lottie/lottie.dart';
 
 import '../../services/itinerary_service.dart';
 
 class SocialHomeScreen extends StatefulWidget {
+  static const String routeName = '/socialHome';
   const SocialHomeScreen({super.key});
 
   @override
@@ -59,10 +61,10 @@ class _SocialHomeScreenState extends State<SocialHomeScreen> {
               TextField(
                 readOnly: true,
                 autofocus: false,
-                onTap: () {
-                  Navigator.push(
+                onTap: () async {
+                  await Navigator.pushNamed(
                     context,
-                    MaterialPageRoute(builder: (context) => const AddSocials()),
+                    AddSocials.routeName,
                   ).then((value) {
                     createItenary();
                   });
@@ -106,92 +108,130 @@ class _SocialHomeScreenState extends State<SocialHomeScreen> {
                     )
                   : SizedBox(
                       // height: 200,
-                      child: ListView.builder(
-                        physics: NeverScrollableScrollPhysics(),
-                        itemCount: result.length,
-                        shrinkWrap: true,
-                        itemBuilder: (context, index) {
-                          return Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Container(
-                              width: double.infinity,
-                              decoration: BoxDecoration(
-                                  border:
-                                      Border.all(width: 1, color: Colors.green),
-                                  borderRadius: BorderRadius.circular(10),
-                                  color: Color.fromARGB(255, 240, 240, 240)),
-                              child: Padding(
-                                padding: const EdgeInsets.all(15.0),
+                      child: RefreshIndicator(
+                        onRefresh: () async {
+                          createItenary();
+                          setState(() {});
+                        },
+                        child: result.isEmpty
+                            ? Padding(
+                                padding: const EdgeInsets.all(8.0),
                                 child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Row(
-                                      children: [
-                                        if (result[index]["website"] ==
-                                            'instagram')
-                                          CircleAvatar(
-                                            backgroundColor: Colors.white,
-                                            child: Image.asset(
-                                              'assets/icons/create/instagram.png',
-                                              fit: BoxFit.cover,
-                                            ),
-                                          ),
-                                        if (result[index]["website"] ==
-                                            'twitter')
-                                          CircleAvatar(
-                                            backgroundColor: Colors.white,
-                                            child: Image.asset(
-                                              'assets/icons/create/twitter.png',
-                                              fit: BoxFit.cover,
-                                            ),
-                                          ),
-                                        if (result[index]["website"] ==
-                                            'snapchat')
-                                          CircleAvatar(
-                                            backgroundColor: Colors.white,
-                                            child: Image.asset(
-                                              'assets/icons/create/snapchat.png',
-                                              fit: BoxFit.cover,
-                                            ),
-                                          ),
-                                        SizedBox(
-                                          width: 10,
-                                        ),
-                                        Text(
-                                          result[index]["username"],
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold),
-                                          textAlign: TextAlign.left,
-                                        ),
-                                        Image.asset(
-                                          'assets/icons/create/verified.png',
-                                          fit: BoxFit.cover,
-                                          width: 30,
-                                          height: 30,
-                                        ),
-                                        Spacer(),
-                                        GestureDetector(
-                                          onTap: () async {
-                                            await ItineraryService()
-                                                .delete(result[index]['_id']);
-                                            setState(() {
-                                              result.removeAt(index);
-                                            });
-                                          },
-                                          child: Icon(
-                                            Icons.delete,
-                                            color: Colors.red,
-                                          ),
-                                        )
-                                      ],
+                                    Lottie.asset(
+                                        'assets/icons/create/anim2.json',
+                                        width: 100,
+                                        height: 100),
+                                    SizedBox(
+                                      height: 15,
+                                    ),
+                                    Text(
+                                      'No accounts linked',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold),
+                                      textAlign: TextAlign.left,
                                     ),
                                   ],
                                 ),
+                              )
+                            : ListView.builder(
+                                // physics: NeverScrollableScrollPhysics(),
+                                itemCount: result.length,
+                                shrinkWrap: true,
+                                itemBuilder: (context, index) {
+                                  return Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Container(
+                                      width: double.infinity,
+                                      decoration: BoxDecoration(
+                                          border: Border.all(
+                                              width: 1, color: Colors.green),
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                          color: Color.fromARGB(
+                                              255, 240, 240, 240)),
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(15.0),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.end,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Row(
+                                              children: [
+                                                if (result[index]["website"] ==
+                                                    'instagram')
+                                                  CircleAvatar(
+                                                    backgroundColor:
+                                                        Colors.white,
+                                                    child: Image.asset(
+                                                      'assets/icons/create/instagram.png',
+                                                      fit: BoxFit.cover,
+                                                    ),
+                                                  ),
+                                                if (result[index]["website"] ==
+                                                    'twitter')
+                                                  CircleAvatar(
+                                                    backgroundColor:
+                                                        Colors.white,
+                                                    child: Image.asset(
+                                                      'assets/icons/create/twitter.png',
+                                                      fit: BoxFit.cover,
+                                                    ),
+                                                  ),
+                                                if (result[index]["website"] ==
+                                                    'snapchat')
+                                                  CircleAvatar(
+                                                    backgroundColor:
+                                                        Colors.white,
+                                                    child: Image.asset(
+                                                      'assets/icons/create/snapchat.png',
+                                                      fit: BoxFit.cover,
+                                                    ),
+                                                  ),
+                                                SizedBox(
+                                                  width: 10,
+                                                ),
+                                                Text(
+                                                  result[index]["username"],
+                                                  style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                  textAlign: TextAlign.left,
+                                                ),
+                                                Image.asset(
+                                                  'assets/icons/create/verified.png',
+                                                  fit: BoxFit.cover,
+                                                  width: 30,
+                                                  height: 30,
+                                                ),
+                                                Spacer(),
+                                                GestureDetector(
+                                                  onTap: () async {
+                                                    await ItineraryService()
+                                                        .delete(result[index]
+                                                            ['_id']);
+                                                    setState(() {
+                                                      result.removeAt(index);
+                                                    });
+                                                  },
+                                                  child: Icon(
+                                                    Icons.delete,
+                                                    color: Colors.red,
+                                                  ),
+                                                )
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                },
                               ),
-                            ),
-                          );
-                        },
                       ),
                     ),
             ],

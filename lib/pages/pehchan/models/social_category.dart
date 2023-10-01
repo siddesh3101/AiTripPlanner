@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-enum QrCategory { instagram, twitter, snapchat }
+enum QrCategory { instagram, twitter, snapchat, facebook }
 
 extension QrCategoryExtension on QrCategory {
   String get name {
@@ -11,6 +11,8 @@ extension QrCategoryExtension on QrCategory {
         return 'Twitter';
       case QrCategory.snapchat:
         return 'Snapchat';
+      case QrCategory.facebook:
+        return 'Facebook';
     }
   }
 
@@ -22,6 +24,8 @@ extension QrCategoryExtension on QrCategory {
         return 'twitter.png';
       case QrCategory.snapchat:
         return 'snapchat.png';
+      case QrCategory.facebook:
+        return 'facebook.png';
     }
   }
 
@@ -33,6 +37,8 @@ extension QrCategoryExtension on QrCategory {
         return 'twitter';
       case QrCategory.snapchat:
         return 'snapchat';
+      case QrCategory.facebook:
+        return 'facebook';
     }
   }
 
@@ -44,6 +50,8 @@ extension QrCategoryExtension on QrCategory {
         return const Color(0xFFF3ECFF);
       case QrCategory.snapchat:
         return const Color(0xFFFFEDE9);
+      case QrCategory.facebook:
+        return Color.fromARGB(255, 249, 225, 220);
     }
   }
 
@@ -55,6 +63,8 @@ extension QrCategoryExtension on QrCategory {
         return 'Enter your twitter username';
       case QrCategory.snapchat:
         return 'Enter your snapchat username';
+      case QrCategory.facebook:
+        return 'Enter your facebook username';
     }
   }
 
@@ -63,6 +73,7 @@ extension QrCategoryExtension on QrCategory {
       case QrCategory.instagram:
       case QrCategory.twitter:
       case QrCategory.snapchat:
+      case QrCategory.facebook:
         return 'https://www.${name.toLowerCase()}.com/';
     }
   }
