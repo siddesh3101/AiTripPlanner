@@ -109,6 +109,25 @@ class ItineraryService {
     }
   }
 
+  Future<dynamic> findUser(String q) async {
+    var data2 = {
+      'q': q,
+    };
+    print(data2);
+
+    try {
+      Response response = await _dio.get(
+        '/find',
+        queryParameters: data2,
+      );
+      print(response.data);
+
+      return response.data;
+    } on DioError catch (e) {
+      throw Exception(e.message);
+    }
+  }
+
   Future<List<dynamic>> getItinerary() async {
     try {
       Response response = await _dio.get(
